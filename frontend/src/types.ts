@@ -28,4 +28,5 @@ export type Post = {
   type: 'photo' | 'note' | 'file'
   message: string
   createdAt: string
+  publishedToProfile: boolean
 }

@@ -1,12 +1,18 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
+import authFetch from '../utils/authFetch'
 import type { Challenge } from '../types'
 
 const CalendarPage = () => {
   const [challenges, setChallenges] = useState<Challenge[]>([])
 
   useEffect(() => {
-    axios.get('/api/challenges').then((response) => setChallenges(response.data))
+    const load = async () => {
+      const response = await authFetch('/api/challenges')
+      if (response.ok) {
+        setChallenges(await response.json())
+      }
+    }
+    load()
   }, [])
 
   const dueChallenges = challenges.filter((challenge) => challenge.dueToday && challenge.approved)

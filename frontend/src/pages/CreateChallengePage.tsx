@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import axios from 'axios'
+import authFetch from '../utils/authFetch'
 
 const CreateChallengePage = () => {
   const [form, setForm] = useState({
@@ -20,11 +20,18 @@ const CreateChallengePage = () => {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
-    await axios.post('/api/challenges', {
-      ...form,
-      tags: form.tags.split(',').map((tag) => tag.trim()).filter(Boolean)
+    const response = await authFetch('/api/challenges', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...form,
+        tags: form.tags.split(',').map((tag) => tag.trim()).filter(Boolean)
+      })
     })
-    setSaved(true)
+
+    if (response.ok) {
+      setSaved(true)
+    }
   }
 
   return (
@@ -103,7 +110,7 @@ const CreateChallengePage = () => {
           />
         </label>
         <label className="label-row" style={{ justifyContent: 'space-between' }}>
-          <span>Private challenge (requires approval)</span>
+          <span>Private challenge (others must request to join)</span>
           <input
             type="checkbox"
             checked={form.isPrivate}
@@ -111,7 +118,7 @@ const CreateChallengePage = () => {
           />
         </label>
         <button type="submit" className="small-button">Create challenge</button>
-        {saved && <p style={{ marginTop: 12, color: '#3c7bff' }}>Challenge erfolgreich erstellt und wird zur Genehmigung eingereicht.</p>}
+        {saved && <p style={{ marginTop: 12, color: '#3c7bff' }}>Challenge erfolgreich erstellt und ist sofort aktiv.</p>}
       </form>
     </section>
   )

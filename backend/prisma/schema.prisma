@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String      @id @default(cuid())
+  name       String
+  email      String?     @unique
+  challenges Challenge[] @relation("Memberships")
+  posts      Post[]
+}
+
+model Challenge {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  duration    String
+  category    String
+  penalties   String
+  strikeLostIf String
+  isPrivate   Boolean  @default(false)
+  approved    Boolean  @default(false)
+  dueToday    Boolean  @default(false)
+  members     User[]   @relation("Memberships")
+  posts       Post[]
+  tags        Tag[]    @relation("ChallengeTags")
+}
+
+model Post {
+  id                 String    @id @default(cuid())
+  challenge          Challenge @relation(fields: [challengeId], references: [id])
+  challengeId        String
+  author             User      @relation(fields: [authorId], references: [id])
+  authorId           String
+  type               String
+  message            String
+  publishedToProfile Boolean   @default(false)
+  createdAt          DateTime  @default(now())
+}
+
+model Tag {
+  id         String      @id @default(cuid())
+  name       String      @unique
+  challenges Challenge[] @relation("ChallengeTags")
+}

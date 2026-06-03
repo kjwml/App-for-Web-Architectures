@@ -1,19 +1,40 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import axios from 'axios'
-import type { Challenge, User } from '../types'
+import authFetch from '../utils/authFetch'
+import type { Challenge, Post, User } from '../types'
 
 const ProfilePage = () => {
   const { id } = useParams()
   const [user, setUser] = useState<User | null>(null)
   const [friends, setFriends] = useState<User[]>([])
   const [challenges, setChallenges] = useState<Challenge[]>([])
+  const [posts, setPosts] = useState<Post[]>([])
 
   useEffect(() => {
     const userId = id || 'current'
-    axios.get(`/api/users/${userId}`).then((response) => setUser(response.data))
-    axios.get('/api/users').then((response) => setFriends(response.data))
-    axios.get('/api/challenges').then((response) => setChallenges(response.data))
+    const load = async () => {
+      const userResponse = await authFetch(`/api/users/${userId}`)
+      if (userResponse.ok) {
+        setUser(await userResponse.json())
+      }
+
+      const friendsResponse = await authFetch('/api/users')
+      if (friendsResponse.ok) {
+        setFriends(await friendsResponse.json())
+      }
+
+      const challengeResponse = await authFetch('/api/challenges')
+      if (challengeResponse.ok) {
+        setChallenges(await challengeResponse.json())
+      }
+
+      const postsResponse = await authFetch(`/api/users/${userId}/posts`)
+      if (postsResponse.ok) {
+        setPosts(await postsResponse.json())
+      }
+    }
+
+    load()
   }, [id])
 
   const friendList = friends.filter((person) => person.id !== user?.id).slice(0, 5)
@@ -70,6 +91,21 @@ const ProfilePage = () => {
               <li key={challenge.id}>{challenge.name}</li>
             ))}
           </ul>
+        )}
+      </div>
+
+      <div className="page-card">
+        <h3>Published profile posts</h3>
+        {posts.length === 0 ? (
+          <p>No published posts yet.</p>
+        ) : (
+          posts.map((post) => (
+            <div key={post.id} style={{ marginBottom: 14, paddingBottom: 14, borderBottom: '1px solid #ebeffc' }}>
+              <p style={{ margin: 0, fontWeight: 600 }}>{post.type}</p>
+              <p style={{ margin: '8px 0 0' }}>{post.message}</p>
+              <small style={{ color: '#6e72a5' }}>{new Date(post.createdAt).toLocaleString()}</small>
+            </div>
+          ))
         )}
       </div>
     </section>

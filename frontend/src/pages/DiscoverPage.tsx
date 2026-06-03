@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import axios from 'axios'
+import authFetch from '../utils/authFetch'
 import ChallengeCard from '../components/ChallengeCard'
 import type { Challenge } from '../types'
 
@@ -8,7 +8,13 @@ const DiscoverPage = () => {
   const [query, setQuery] = useState('')
 
   useEffect(() => {
-    axios.get('/api/challenges').then((response) => setChallenges(response.data))
+    const load = async () => {
+      const response = await authFetch('/api/challenges')
+      if (response.ok) {
+        setChallenges(await response.json())
+      }
+    }
+    load()
   }, [])
 
   const visibleChallenges = useMemo(() => {

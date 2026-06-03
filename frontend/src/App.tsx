@@ -5,6 +5,7 @@ import CalendarPage from './pages/CalendarPage'
 import ProfilePage from './pages/ProfilePage'
 import ChallengePage from './pages/ChallengePage'
 import CreateChallengePage from './pages/CreateChallengePage'
+import LoginPage from './pages/LoginPage'
 import './App.css'
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
           <Route path="/profile/:id?" element={<ProfilePage />} />
           <Route path="/challenge/:id" element={<ChallengePage />} />
           <Route path="/create" element={<CreateChallengePage />} />
+          <Route path="/login" element={<LoginPage />} />
         </Routes>
       </main>
     </div>

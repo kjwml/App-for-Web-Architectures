@@ -50,9 +50,9 @@ const challenges = [
 ]
 
 const posts = [
-  { id: 'p1', challengeId: 'c1', authorId: 'current', type: 'photo', message: 'Gym session mit 5 Fotos hochgeladen.', createdAt: new Date().toISOString() },
-  { id: 'p2', challengeId: 'c1', authorId: 'user2', type: 'note', message: 'Heute Beine trainiert.', createdAt: new Date().toISOString() },
-  { id: 'p3', challengeId: 'c3', authorId: 'user3', type: 'file', message: 'Mood tracker Screenshot angehängt.', createdAt: new Date().toISOString() }
+  { id: 'p1', challengeId: 'c1', authorId: 'current', type: 'photo', message: 'Gym session mit 5 Fotos hochgeladen.', createdAt: new Date().toISOString(), publishedToProfile: true },
+  { id: 'p2', challengeId: 'c1', authorId: 'user2', type: 'note', message: 'Heute Beine trainiert.', createdAt: new Date().toISOString(), publishedToProfile: false },
+  { id: 'p3', challengeId: 'c3', authorId: 'user3', type: 'file', message: 'Mood tracker Screenshot angehängt.', createdAt: new Date().toISOString(), publishedToProfile: true }
 ]
 
 export { users, challenges, posts }

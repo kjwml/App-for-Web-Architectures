@@ -1,15 +1,22 @@
 import { Router } from 'express'
-import { users } from '../data.js'
+import { posts, users } from '../data.js'
 
 const router = Router()
+
+const resolveUserId = (req) => {
+  if (req.params.id === 'current') {
+    return req.user?.id || req.user?.userId
+  }
+  return req.params.id
+}
 
 router.get('/', (req, res) => {
   res.json(users)
 })
 
 router.get('/:id', (req, res) => {
-  const id = req.params.id
-  const user = users.find((item) => item.id === id || (id === 'current' && item.id === 'current'))
+  const userId = resolveUserId(req)
+  const user = users.find((item) => item.id === userId)
   if (!user) {
     return res.status(404).json({ message: 'User not found' })
   }
@@ -17,7 +24,8 @@ router.get('/:id', (req, res) => {
 })
 
 router.post('/:id/friends', (req, res) => {
-  const user = users.find((item) => item.id === req.params.id)
+  const userId = resolveUserId(req)
+  const user = users.find((item) => item.id === userId)
   if (!user) {
     return res.status(404).json({ message: 'User not found' })
   }
@@ -26,6 +34,12 @@ router.post('/:id/friends', (req, res) => {
     user.friends.push(friendId)
   }
   res.json(user)
+})
+
+router.get('/:id/posts', (req, res) => {
+  const userId = resolveUserId(req)
+  const userPosts = posts.filter((post) => post.authorId === userId && post.publishedToProfile)
+  res.json(userPosts)
 })
 
 export default router
